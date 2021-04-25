@@ -9,17 +9,16 @@ class Transaction{
 }
 
 class Block{
-    constructor(index, timestamp, data, previousHash = ''){
-        this.index = index;
+    constructor(timestamp, transactions, previousHash = ''){
         this.timestamp = timestamp;
-        this.data = data;
+        this.transactions = transactions;
         this.previousHash = previousHash;
         this.hash = this.calculateHash();
         this.nonce = 0;
     }
 
     calculateHash(){
-        return SHA256(this.index + this.previousHash + this.timestamp + JSON.stringify(this.data) + this.nonce).toString();
+        return SHA256(this.previousHash + this.timestamp + JSON.stringify(this.data) + this.nonce).toString();
     }
 
     // Proof-of-Work:
@@ -40,17 +39,30 @@ class BlockChain{
     constructor(){
         this.chain = [this.createGenesisBlock()];
         this.difficulty = 2;
+        this.miningReward = 100;
+        this.pendingTransactions = [];
     }
     createGenesisBlock(){
-        return new Block(0, "2021/04/18", "Genesis Block", "0");
+        return new Block("2021/04/18", "Genesis Block", "0");
     }
     getLatestBlock(){
         return this.chain[this.chain.length - 1];
     }
-    addNewBlock(newBlock){
+    /*addNewBlock(newBlock){
         newBlock.previousHash = this.getLatestBlock().hash;
         newBlock.miningBlock(this.difficulty);
         this.chain.push(newBlock);
+    }*/
+    miningPendingTransactions(miningRewardAddress){
+        let block = new Block(Date.now(), this.pendingTransactions, this.getLatestBlock.hash());
+        block.miningBlock(this.difficulty);
+
+        console.log("Block successfully mined !");
+        this.chain.push(block);
+        // 
+        this.pendingTransactions = [
+            new Transaction(null, miningRewardAddress, this.miningReward)
+        ];
     }
 
     // Check whether blockchain is valid
