@@ -1,3 +1,5 @@
+const {BlockChain, Transaction} = require("./blockchain.js");
+
 let ming = new BlockChain();
 
 // Transactions come in
